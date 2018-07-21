@@ -143,10 +143,10 @@ export default {
       loading2: true,
       dialogTableVisible: false,
       dialogFormVisible: false,
-      goodslists:[],
-       person: [],
-       item: {},
-       state1: "",
+      goodslists: [],
+      person: [],
+      item: {},
+      state1: "",
       title: "",
       tableName: "",
       goodsId: [],
@@ -158,6 +158,7 @@ export default {
         resource: "",
         desc: ""
       },
+      type: "",
       formLabelWidth: "120px"
     };
   },
@@ -177,24 +178,72 @@ export default {
             })
             .then(res => {
               if (res.status) {
+                if (this.type.className.indexOf("fruits") > 0) {
+                  //   console.log(666);
+                  let datamin = [];
+                  http.post("/goodslist").then(res => {
+                    if (res.status) {
+                      this.goodslists = res.data.map(item => {
+                        // console.log(item.CommodityName);
+                        return { value: item.CommodityName, label: item._id };
+                      });
+                      this.loading2 = false;
+                      if (this.type.type == "全部") {
+                        this.datalist = res.data;
+                        console.log(666, this.datalist);
+                      } else {
+                        for (let i = 0; i < res.data.length; i++) {
+                          if (
+                            res.data[i].CommodityName.indexOf(this.type.type) >
+                            0
+                          ) {
+                            datamin.push(res.data[i]);
+                            this.datalist = datamin;
+                          }
+                        }
+                      }
+                    }
+                    // console.log(this.datalist);
+                  });
+                } else if (this.type.className.indexOf("meat") > 0) {
+                  let datamin = [];
+                  http.post("/meat_goodsData").then(res => {
+                    if (res.status) {
+                      this.loading2 = false;
+                      if (this.type.type == "全部") {
+                        this.datalist = res.data;
+                      } else {
+                        for (let i = 0; i < res.data.length; i++) {
+                          if (
+                            String(res.data[i].CommodityTag) == this.type.type
+                          ) {
+                            datamin.push(res.data[i]);
+                            this.datalist = datamin;
+                          }
+                        }
+                      }
+                    }
+                  });
+                }
+              } else {
                 this.$message({
-                  type: "success",
-                  message: "删除成功!"
+                  message: "你还没有选中商品哦",
+                  type: "warning"
                 });
               }
-              console.log(res);
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
             })
+            // console.log(res);
+
             .catch(() => {
               this.$message({
                 type: "info",
                 message: "已取消删除"
               });
             });
-        });
-      } else {
-        this.$message({
-          message: "你还没有选中商品哦",
-          type: "warning"
         });
       }
     },
@@ -221,7 +270,7 @@ export default {
           type: className.slice(23)
         })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.status) {
             this.$message({
               type: "success",
@@ -279,22 +328,22 @@ export default {
     }
   },
   mounted() {
-    let type = JSON.parse(window.localStorage.getItem("type"));
+    this.type = JSON.parse(window.localStorage.getItem("type"));
     // console.log(type);
-    if (type.className.indexOf("fruits") > 0) {
+    if (this.type.className.indexOf("fruits") > 0) {
       //   console.log(666);
       http.post("/goodslist").then(res => {
         if (res.status) {
           this.goodslists = res.data.map(item => {
-            console.log(item.CommodityName)
+            // console.log(item.CommodityName);
             return { value: item.CommodityName, label: item._id };
           });
           this.loading2 = false;
-          if (type.type == "全部") {
+          if (this.type.type == "全部") {
             this.datalist = res.data;
           } else {
             for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].CommodityName.indexOf(type.type) > 0) {
+              if (res.data[i].CommodityName.indexOf(this.type.type) > 0) {
                 this.datalist.push(res.data[i]);
               }
             }
@@ -302,15 +351,15 @@ export default {
         }
         // console.log(this.datalist);
       });
-    } else if (type.className.indexOf("meat") > 0) {
+    } else if (this.type.className.indexOf("meat") > 0) {
       http.post("/meat_goodsData").then(res => {
         if (res.status) {
           this.loading2 = false;
-          if (type.type == "全部") {
+          if (this.type.type == "全部") {
             this.datalist = res.data;
           } else {
             for (let i = 0; i < res.data.length; i++) {
-              if (String(res.data[i].CommodityTag) == type.type) {
+              if (String(res.data[i].CommodityTag) == this.type.type) {
                 this.datalist.push(res.data[i]);
               }
             }
@@ -327,26 +376,25 @@ export default {
   padding: 10px 50px 10px 50px;
   border-bottom: 1px solid #ccc;
   overflow: hidden;
-  .demo-autocomplete{
+  .demo-autocomplete {
     float: right;
-    width: 300px; 
-  }
-  .el-col{
     width: 300px;
-    .el-autocomplete{
+  }
+  .el-col {
+    width: 300px;
+    .el-autocomplete {
       width: 100%;
     }
   }
-  .el-button{
+  .el-button {
     float: left;
     margin-left: 10px;
   }
-
 }
 .el-form-item {
   margin-bottom: 10px;
 }
-.el-autocomplete-suggestion{
+.el-autocomplete-suggestion {
   top: 120px !important;
 }
 </style>

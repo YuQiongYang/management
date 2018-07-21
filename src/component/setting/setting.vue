@@ -51,6 +51,7 @@ import http from "../../lib/httpclient";
       },
       handleSelect(item) {
         console.log(item);
+        console.log(this.state2)
       }
     },
     mounted() {

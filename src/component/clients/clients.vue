@@ -15,6 +15,8 @@
  <span @click="search">
 <el-button type="primary" @click="dialogTableVisible = false ; search" icon="el-icon-search">
  搜索</el-button></span>
+ <!-- <router-link to="/" @click="quit" >退出登陆</router-link> -->
+ <span @click="quit" class="quit_sp" >退出登陆</span>
     </div>
 
   <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
@@ -116,6 +118,17 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    quit(){
+      this.$confirm('你要走了吗？T_T', '小爱同学：', {
+          confirmButtonText: '走走走',
+          cancelButtonText: '唉！不走了',
+          type: 'warning'
+        }).then(() => {
+          window.localStorage.clear()
+          this.$router.push("/")
+    
+        })
+    },
     querySearch(queryString, cb) {
       var goodslists = this.goodslists;
       var results = queryString
@@ -198,7 +211,15 @@ export default {
     }
     button {
       margin-left: 10px;
+
     }
+    .quit_sp{
+      margin-left: 20px;
+      line-height: 45px;
+      color: #333;
+      font-weight: 700;
+  
+}
   }
 }
 .el-autocomplete-suggestion {
@@ -212,4 +233,5 @@ export default {
     float: right;
   }
 }
+
 </style>

@@ -63,7 +63,8 @@ export default {
         {
           item: "系统设置",
           icon: "cog",
-          file: [{ name: "修改密码", path: "/management/setting" }]
+          file: [{ name: "修改密码", path: "/management/setting" }
+          ]
         }
       ]
     };
